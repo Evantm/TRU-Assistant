@@ -11,14 +11,131 @@
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+	
+	
+	<!-- Colour resources: https://www.tru.ca/brandguide/colours.html   !-->
+	
+
 
 </head>
+
+
+<script>
+
+function getCellByDayTime(day, time) {
+	// day is integer 0-6, time is string '0830' or '0800'
+
+	// TODO: Check day and time are valid.
+
+	var time_key = time;
+	var $cells = $('.schedule-table tr.' + time_key + ' td');
+
+	// $cells[1 + i - 1] // First cell is time label, then Sunday is skipped.
+	return $($cells[day]);
+}
+
+
+function CourseCollection() {
+
+}
+
+
+function CourseItem(data, parent) {
+	this.title = data.title;
+	this.colorIndex = 0;
+	this.parent = parent;
+	// this.dom = [];
+	// this.blockDom
+	// this.textDom
+}
+
+const COLORS = ['#00FFFF'];
+
+CourseItem.prototype.getColor = function() {
+	return COLORS[this.colorIndex];
+};
+
+
+function addCourseItemToCell(course_item, $cell) {
+	var $block = $("<div class='course-item-block'></div>");
+	var $text = $("<div class='course-item-text'>" + course_item.title + "</div>");
+
+	course_item.blockDom = $block;
+	course_item.textDom = $text;
+
+	// TODO: color selection, based on conflicts with adjacent courses.
+
+	$block.css('background-color', course_item.getColor());   
+	$text.css('color', course_item.getColor());
+
+	$cell.children('.course-item-blocks').append($block);
+	$cell.children('.course-item-texts').append($text);
+}
+
+
+$(document).ready(() => {
+	// Load data.
+	var $mon_830 = getCellByDayTime(1, '0830');
+	var parent = {};
+	addCourseItemToCell(new CourseItem({title: 'COMP333'}, parent), $mon_830);
+
+});
+
+</script>
+
+
+
+
 
 <style>
 /* Banner styling */
 
+body{
+	
+	background-color:  #fff5de;
+
+}
+
+.container{
+	
+	color: black;
+	/* text-align:center; */
+	
+
+	
+
+}
+
+.main-content{
+
+	background-color:#f3f3f3;
+
+}
+
+.list-group {
+	
+
+
+
+
+}
+
+
+
+
+
+
 .banner-bar {
-	background-color: #f5f5f5;
+	background-color:#003e51;
+	color: white;
+	text-align:center;
+	position: fixed;
+	width: 100%;
+
+	z-index: 999;
+	height: 10%;
+	
 
 /*
 grey100 #f5f5f5
@@ -31,26 +148,168 @@ grey700 #616161
 */
 
 }
+
+.logo-image{
+	
+	float: left;
+	width: 150px;
+	margin-left: 15%;
+	margin-top: 10px;
+
+}
+
+.header-text{
+
+	left: calc(50vw - 150px);
+	position: absolute;
+	
+
+}
+
+
+
+
 </style>
 
 <style>
 /* Filter dialog styling */
 
 
+.filter{
+
+
+}
+
+
+.primary-list{
+	
+
+
+
+}
+
+#checkBox{
+	float: right;
+	margin-right: 10px;
+	margin-top: 15px;
+	/* margin-bottom: 40px;  ?????? */ 
+}
+
+.image{
+	display:none;
+	width:15px; 
+	height:15px;
+
+
+}
+
+.image-left{
+	
+	width:15px; 
+	height:15px;
+
+
+}
+.image-inner{
+	display:none;
+	width:10px; 
+	height:10px;
+
+
+}
+
+.image-left-inner{
+	
+	width:10px; 
+	height:10px;
+
+
+}
+
+.secondary-list{
+
+	list-style-type: none;
+	display: none;
+
+
+}
+
+.third-list {
+
+	list-style-type: none;
+	display: none;
+
+
+}
+
+.third-list > li{
+	
+	border: solid black 1px;
+	border-bottom: none;
+	display:block;
+	width: 40%;
+
+}
+
+.third-list > li:last-child{
+	border-bottom: solid black 1px;
+
+}
+
+
+li:hover {
+	
+	color: #003e51;
+	background-color: #e0e2e5;
+	 /* border: 1px solid  #003e51; */
+	cursor: pointer;
+	/* font-weight: bold; */
+	
+	
+	
+
+
+}
+
+.schedule-box{
+	background-color: #e0e2e5;
+	color: #003e51;
+	text-align:center;
+
+	
+
+}
+
 </style>
 
 <style>
 /* Schedule visualization styling */
 
+.schedule-header{
+
+	background-color:#003e51;
+	color: white;
+
+}
+
+
+
 
 table.schedule-table {
-
-} 
+	
+	background-color: white;
+	<!-- border: 1px solid #003e51; !-->
+	
+}
 
 /* Styling for table headers */
 .schedule-table tr > th:nth-child(1) {
 	width: 70px;
 }
+.schedule-table tr > th:nth-child(n+2) {
+	width: 240px;  /* Width of the columns for each day */
+}
+
 
 .schedule-table .day-header {
 	color: blue;
@@ -66,20 +325,62 @@ table.schedule-table {
 	color: red;
 }
 
+.schedule-table tr > *:nth-child(1) > span.time-30-text {
+	display: none;
+}
 
+
+
+/* Styling for the columns after 1st */
+.schedule-table tr > *:nth-child(n+2) {
+	border-left: #bdbdbd 2px solid; 
+}
 
 .schedule-table td.course-item {
 	padding: 0;
-	position: absolute;
-	margin-top: -1px;
-	border: 0;
+	/*position: absolute;*/
+	/*margin-top: -1px;*/
+	/*border: 0;*/
 }
 
-.schedule-table td.course-item > div {
+.schedule-table td.course-item > .course-item-blocks {
+	position: absolute;
+}
+
+.schedule-table td.course-item .course-item-block {
 	display: inline-block;
-	background-color: green;
+	background-color: cyan;
 	height: 50px;
 	width: 50px;
+	border: #757575 1px solid;  /* These two arent doing anything maybe */
+	border-left: none;
+}
+
+.schedule-table td.course-item > .course-item-blocks > div:nth-child(n+2) {
+	margin-left: -4px;
+}
+
+.schedule-table td.course-item > .course-item-blocks > div:first-child {
+	/*display: inline-block;
+	background-color: cyan;
+	height: 48px;
+	width: 48px;*/
+	border: #757575 1px solid;
+}
+
+.schedule-table div.course-item-texts {
+	position: absolute;
+}
+
+.schedule-table div.course-item-text {
+	display: block;
+	width: 200px;
+	color: magenta;
+	font-size: 16px;
+	font-weight: 600;
+	text-shadow: 0px 0px 5px black, 1px 1px 1px black, -1px -1px 1px black, 0px 1px 1px black, 1px 0px 1px black;
+	text-align: center;
+	letter-spacing: 1px;
 }
 
 /* For styling nth column */
@@ -91,19 +392,301 @@ table.schedule-table {
 
 
 <body>
-<div class='container banner-bar'>
+<div class='banner-bar'>
 <!-- Banner goes here -->
-<h1>TRU Assistant</h1>
+<img src="images/trulogo.png" class="logo-image"/>
+<h1 class="header-text">TRU Assistant</h1>
 </div>
-
-<div class='container'>
+<div class="container main-content">
+<div class='container filter'>
 <!-- Dynamic filter dialog is here -->
-Filter Dialog
-</div>
 
-<div class='container'>
+<br>
+<br>
+<br>
+<br>
+<br>
+<label for="term"> Term: </label> 
+<select name="term"> 
+	<option value="Fall 2017"> Fall 2017 </option>
+	<option value="Winter 2018"> Winter 2018 </option>
+</select>
+
+<br/><br/>
+<!-- <div class='container'> !-->
+
+<ul class="list-group primary-list">
+    <li class="list-group-item" onclick="handleListClick.call(this)">
+		<img src="images/chevron.png" class="image"/>
+		<img src="images/chevronleft.png" class="image-left"/>
+		COMP - Computing Science
+	</li>
+		<ul class="secondary-list">
+			<li onclick="handleListClick.call(this)"> 
+				<img src="images/chevron.png" class="image-inner"/>
+				<img src="images/chevronleft.png" class="image-left-inner"/>
+				COMP 1xxx </li>
+					
+				<ul class="third-list" >
+					<li> <data value="10418"> COMP 1020 <input id="checkBox" type="checkbox">
+					<br> Introduction to Spreadsheets 
+					
+					
+					</data></li>
+					
+					
+					
+					<li> <data value="10420"> COMP 1030 <input id="checkBox" type="checkbox">
+					<br> Introduction to Databases 
+					
+					</data></li>
+					
+					
+					<li> <data value="10421"> COMP 1050 <input id="checkBox" type="checkbox">
+					<br> Computer System Maintenance 
+					
+					</data></li>
+					
+					
+					
+					<li> <data value="10423"> COMP 1070 <input id="checkBox" type="checkbox">
+					<br> Introduction to Digital Media
+					
+					</data></li>
+					
+					
+					
+				</ul>
+			<li onclick="handleListClick.call(this)"> 
+				<img src="images/chevron.png" class="image-inner"/>
+				<img src="images/chevronleft.png" class="image-left-inner"/>
+				COMP 2xxx </li>
+			
+			<ul class="third-list" >
+					<li> <data value="10447">  COMP 2130 <input id="checkBox" type="checkbox">
+					<br> Introduction to Computer Systems
+					
+					
+					</data></li>
+					
+				
+					
+					<li> <data value="10453"> COMP 2210 <input id="checkBox" type="checkbox">
+					<br> Programming Methods 
+					
+					</data></li>
+					
+					
+					
+					<li> <data value="10457"> COMP 2680 <input id="checkBox" type="checkbox">
+					<br> Web Site Design and Development 
+					
+					</data></li>
+					
+					
+					
+					<li> <data value="10459"> COMP 2920 <input id="checkBox" type="checkbox">
+					<br> Software Architecture and Design
+					
+					</data></li>
+					
+					
+					
+				</ul>
+			<li onclick="handleListClick.call(this)"> 
+				<img src="images/chevron.png" class="image-inner"/>
+				<img src="images/chevronleft.png" class="image-left-inner"/>
+				COMP 3xxx </li>
+			
+			<ul class="third-list">
+					<li> <data value="20398">  COMP 3160 <input id="checkBox" type="checkbox">
+					<br> Mobile Application Development 2
+					
+					
+					</data></li>
+					
+				
+					
+					<li> <data value="20400"> COMP 3270 <input id="checkBox" type="checkbox">
+					<br> Computer Networks 
+					
+					</data></li>
+					
+					
+					
+					<li> <data value="20402"> COMP 3410 <input id="checkBox" type="checkbox">
+					<br> Operating Systems 
+					
+					</data></li>
+					
+					
+					
+					<li> <data value="20404"> COMP 3520 <input id="checkBox" type="checkbox">
+					<br> Software Engineering
+					
+					</data></li>
+					
+					
+					
+				</ul>
+			
+			
+			<li onclick="handleListClick.call(this)">
+				<img src="images/chevron.png" class="image-inner"/>
+				<img src="images/chevronleft.png" class="image-left-inner"/>
+				COMP 4xxx </li>
+				<ul class="third-list">
+					<li> <data value="20410">  COMP 4530 <input id="checkBox" type="checkbox">
+					<br> Advanced Software Engineering
+					
+					
+					</data></li>
+					
+				
+					
+					<li> <data value="20423"> COMP 4980<input id="checkBox" type="checkbox">
+					<br> ST: Software Testing
+					
+					</data></li>
+					
+					
+					
+					<li> <data value="21562"> COMP 4980<input id="checkBox" type="checkbox">
+					<br> ST: Virtual Reality
+					
+					</data></li>
+					
+					
+			
+					
+				</ul>
+			
+		</ul>
+			
+    <li class="list-group-item" onclick="handleListClick.call(this)"> 
+		<img src="images/chevron.png" class="image"/>
+		<img src="images/chevronleft.png" class="image-left"/>
+		MATH - Mathematics </li>
+	<ul class="secondary-list">
+			<li onclick="handleListClick.call(this)">
+				<img src="images/chevron.png" class="image-inner"/>
+				<img src="images/chevronleft.png" class="image-left-inner"/>
+				MATH 1xxx </li>
+				<ul class="third-list" >
+					<li> <data value="10898"> MATH 1000 <input id="checkBox" type="checkbox">
+					<br> Pre-Calculus
+					
+					
+					</data></li>
+					
+					
+					
+					<li> <data value="10901"> MATH 1070 <input id="checkBox" type="checkbox">
+					<br> Fundamentals of Mathematics for Business and Economics
+					
+					</data></li>
+					
+					
+					<li> <data value="10916"> MATH 1100 <input id="checkBox" type="checkbox">
+					<br> Finite Mathematics with Applications 1 
+					
+					</data></li>
+					
+					
+					
+
+					
+				</ul>
+			<li onclick="handleListClick.call(this)">
+				<img src="images/chevron.png" class="image-inner"/>
+				<img src="images/chevronleft.png" class="image-left-inner"/>
+				MATH 2xxx </li>
+			
+			<ul class="third-list" >
+					<li> <data value="10958">   MATH 2110 <input id="checkBox" type="checkbox">
+					<br> Calculus 3
+					
+					
+					</data></li>
+					
+				
+					
+					<li> <data value="10960"> MATH 2120 <input id="checkBox" type="checkbox">
+					<br> Linear Algebra 1 
+					
+					</data></li>
+					
+					
+					
+					<li> <data value="20925"> MATH 2240 <input id="checkBox" type="checkbox">
+					<br> Differential Equations 1  
+					
+					</data></li>
+					
+		
+					
+					
+					
+				</ul>
+			<li onclick="handleListClick.call(this)">
+				<img src="images/chevron.png" class="image-inner"/>
+				<img src="images/chevronleft.png" class="image-left-inner"/>
+				MATH 3xxx </li>
+			
+			<ul class="third-list">
+					<li> <data value="20927">  MATH 3030 <input id="checkBox" type="checkbox">
+					<br> Introduction to Stochastic Processes 
+					
+					
+					</data></li>
+					
+				
+					
+					<li> <data value="20929"> MATH 3170 <input id="checkBox" type="checkbox">
+					<br> Calculus 4
+					</data></li>
+					
+					
+					
+					<li> <data value="20931"> MATH 3220 <input id="checkBox" type="checkbox">
+					<br> Abstract Algebra 
+					</data></li>
+					
+					
+		
+					
+					
+				</ul>
+			
+			
+			<li onclick="handleListClick.call(this)"> 
+				<img src="images/chevron.png" class="image-inner"/>
+				<img src="images/chevronleft.png" class="image-left-inner"/>
+				MATH 4xxx </li>
+				<ul class="third-list">
+					<li> <data value="21987">  MATH 4990 <input id="checkBox" type="checkbox">
+					<br> ST: Applied Math
+					
+					
+					</data></li>
+					
+				
+		
+					
+				</ul>
+			
+		</ul>
+    <!-- <li class="list-group-item">Third item</li> !-->
+  </ul>
+
+</div>
+<!-- </div> -->
+<div class='schedule-box'>
 <!-- Schedule visualization goes here -->
-Schedule
+
+<div class="schedule-header">
+<h1 style="text-align:center"> Schedule </h1>
+</div>
 
 <table class="table schedule-table">
 	<thead>
@@ -117,36 +700,230 @@ Schedule
 	  </tr>
 	</thead>
 	<tbody>
-	  <tr>
-	    <td>8:30</td>
-	    <td class='course-item'><div class='schedule-course-item'></div></td>
+	
+	  <!-- <tr class='0800'>
+	    <td><span class='time-00-text'>8:00AM</span></td>
+	    <td class='course-item'>
+	    	<div class='course-item-blocks'>
+	    		<div class='course-item-block'></div>
+	    		<div class='course-item-block'></div>
+	    	</div>
+	    	<div class='course-item-texts'>
+	    		<div class='course-item-text'>COMP3450</div>
+	    		<div class='course-item-text'>COMP3550</div>
+	    	</div>
+	    </td>
 	    <td></td>
 	    <td></td>
 	    <td></td>
 	    <td></td>
+	  </tr> -->
+
+	  <tr class='0800'>
+	    <td><span class='time-00-text'>8:00AM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
 	  </tr>
-	  <tr>
-	    <td>9:30</td>
-	    <td></td>
-	    <td></td>
-	    <td></td>
-	    <td></td>
-	    <td></td>
+	  <tr class='0830'>
+	    <td><span class='time-30-text'>8:30AM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
 	  </tr>
-	  <tr>
-	    <td>10:30</td>
-	    <td></td>
-	    <td></td>
-	    <td></td>
-	    <td></td>
-	    <td></td>
+
+	  <tr class='0900'>
+	    <td><span class='time-00-text'>9:00AM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
 	  </tr>
+	  <tr class='0930'>
+	    <td><span class='time-30-text'>9:30AM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
+	  <tr class='1000'>
+	    <td><span class='time-00-text'>10:00AM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+	  <tr class='1030'>
+	    <td><span class='time-30-text'>10:30AM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
+	  <tr class='1100'>
+	    <td><span class='time-00-text'>11:00AM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+	  <tr class='1130'>
+	    <td><span class='time-30-text'>11:30AM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
+	  <tr class='1200'>
+	    <td><span class='time-00-text'>12:00PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+	  <tr class='1230'>
+	    <td><span class='time-30-text'>12:30PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
+	  <tr class='1300'>
+	    <td><span class='time-00-text'>1:00PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+	  <tr class='1330'>
+	    <td><span class='time-30-text'>1:30PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
+	  <tr class='1400'>
+	    <td><span class='time-00-text'>2:00PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+	  <tr class='1430'>
+	    <td><span class='time-30-text'>2:30PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
+	  <tr class='1500'>
+	    <td><span class='time-00-text'>3:00PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+	  <tr class='1530'>
+	    <td><span class='time-30-text'>3:30PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
+	  <tr class='1600'>
+	    <td><span class='time-00-text'>4:00PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+	  <tr class='1630'>
+	    <td><span class='time-30-text'>4:30PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
+	  <tr class='1700'>
+	    <td><span class='time-00-text'>5:00PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+	  <tr class='1730'>
+	    <td><span class='time-30-text'>5:30PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
+	  <tr class='1800'>
+	    <td><span class='time-00-text'>6:00PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+	  <tr class='1830'>
+	    <td><span class='time-30-text'>6:30PM</span></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	    <td class='course-item'><div class='course-item-blocks'></div><div class='course-item-texts'></div></td>
+	  </tr>
+
 	</tbody>
 </table>
 
-
+</div>
 </div>
 
 </body>
 
 </html>
+
+
+
+<script>
+
+function handleListClick() {
+	$(this).next().toggle();
+	$(this).children().toggle();
+	
+}
+
+</script> 
